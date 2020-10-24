@@ -9,7 +9,7 @@ export default function Dashboard() {
   return (
     <>
       <h1>Dashbard</h1>
-      <h1>Hola {stUsuario !== null && stUsuario.nombre}</h1>
+      <h1>Hola {stUsuario !== null && stUsuario.data.drinks[0].strAlcoholic}</h1>
 
       <button type="button" onClick={() => fnCerrarSesion()}>
         Cerrar Sesión

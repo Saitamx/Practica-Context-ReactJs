@@ -1,65 +1,50 @@
 import React, { useContext, useState } from "react";
 import { Redirect } from "react-router-dom";
 import AuthContext from "../context/auth/authContext";
+import useValidacion from "../hooks/useValidation";
 import Dashboard from "./Dashboard";
 import { arrayPlaceholder } from "./Helper";
+import validarIngreso from "./validarIngreso";
 
 const FormularioIngreso = () => {
-  const [valor, setValor] = useState({
+  const initialState = {
     nombre: "",
     apellido: "",
     edad: 0,
     rut: "",
     email: "",
     password: "",
-  });
+  };
 
   const authContext = useContext(AuthContext);
   const { fnIniciarSesion, stUsuario } = authContext;
 
-  const { nombre, apellido, edad, rut, email, password } = valor;
-
-  const onChange = (e) => {
-    setValor({
-      ...valor,
-      [e.target.name]: e.target.value,
-    });
+  const iniciarSesion = () => {
+    fnIniciarSesion(valores);
   };
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    // VALIDAR USUARIO
-    if (nombre.trim() === "" || password.trim() === "") {
-      alert("Todos los campos son obligatorios");
-      return;
-    }
-    fnIniciarSesion(valor);
-  };
+  const { valores, handleChange, handleSubmit } = useValidacion(
+    initialState,
+    validarIngreso,
+    iniciarSesion,
+  );
+
+  const { nombre, apellido, edad, rut, email, password } = valores;
+
+  const arrayValores = [nombre, apellido, edad, rut, email, password];
 
   return (
     <>
       {stUsuario !== null ? (
         <Redirect to="/dashboard" />
       ) : (
-        <form onSubmit={onSubmit}>
+        <form onSubmit={handleSubmit}>
           {arrayPlaceholder.map((copia, i) => (
             <input
               key={i}
-              onChange={onChange}
+              onChange={handleChange}
               name={copia}
-              value={
-                i === 0
-                  ? nombre
-                  : i === 1
-                  ? apellido
-                  : i === 2
-                  ? edad
-                  : i === 3
-                  ? rut
-                  : i === 4
-                  ? email
-                  : password
-              }
+              value={arrayValores[i]}
               type="text"
               placeholder={copia}
             />
